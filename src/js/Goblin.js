@@ -5,13 +5,11 @@ export default class Goblin {
   }
 
   show(cell) {
-    cell.appendChild(this.element);
+    cell.append(this.element);
   }
 
   remove() {
-    if (this.element.parentElement) {
-      this.element.parentElement.removeChild(this.element);
-    }
+    this.element.remove();
   }
 
   isClicked(target) {

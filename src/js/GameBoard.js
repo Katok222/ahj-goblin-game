@@ -1,3 +1,5 @@
+const BOARD_SIZE = 16;
+
 export default class GameBoard {
   constructor(container) {
     this.container = container;
@@ -5,11 +7,11 @@ export default class GameBoard {
   }
 
   draw() {
-    for (let i = 0; i < 16; i += 1) {
+    for (let i = 0; i < BOARD_SIZE; i += 1) {
       const cell = document.createElement('div');
       cell.classList.add('cell');
       cell.dataset.index = i;
-      this.container.appendChild(cell);
+      this.container.append(cell);
       this.cells.push(cell);
     }
   }

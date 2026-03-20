@@ -1,6 +1,9 @@
 import GameBoard from './GameBoard';
 import Goblin from './Goblin';
 
+const MAX_MISSES = 5;
+const GOBLIN_INTERVAL_MS = 1000;
+
 export default class Game {
   constructor(boardContainer, scoreElement, missesElement, messageElement) {
     this.boardContainer = boardContainer;
@@ -16,6 +19,8 @@ export default class Game {
 
     this.board = new GameBoard(this.boardContainer);
     this.goblin = new Goblin();
+
+    this.onBoardClick = this.onBoardClick.bind(this);
   }
 
   init() {
@@ -26,14 +31,16 @@ export default class Game {
   }
 
   bindEvents() {
-    this.boardContainer.addEventListener('click', (event) => {
-      if (this.goblin.isClicked(event.target)) {
-        this.score += 1;
-        this.isHit = true;
-        this.goblin.remove();
-        this.updateScore();
-      }
-    });
+    this.boardContainer.addEventListener('click', this.onBoardClick);
+  }
+
+  onBoardClick(event) {
+    if (this.goblin.isClicked(event.target)) {
+      this.score += 1;
+      this.isHit = true;
+      this.goblin.remove();
+      this.updateScore();
+    }
   }
 
   start() {
@@ -45,18 +52,16 @@ export default class Game {
         this.updateMisses();
       }
 
-      if (this.misses >= 5) {
+      if (this.misses >= MAX_MISSES) {
         this.finishGame();
         return;
       }
 
       this.showGoblin();
-    }, 1000);
+    }, GOBLIN_INTERVAL_MS);
   }
 
   showGoblin() {
-    this.goblin.remove();
-
     const randomIndex = this.board.getRandomCellIndex(this.currentCellIndex);
     this.currentCellIndex = randomIndex;
     this.isHit = false;
@@ -75,6 +80,7 @@ export default class Game {
 
   finishGame() {
     clearInterval(this.intervalId);
+    this.boardContainer.removeEventListener('click', this.onBoardClick);
     this.goblin.remove();
     this.messageElement.textContent = 'Игра окончена!';
   }
